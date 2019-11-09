@@ -1,9 +1,9 @@
 # Mai: A Protocol for Trading Decentralized Derivatives
 
 ## Motivation
-With the development of the DeFi ecosystem, more and more synthetic assets and derivatives, such as [Market Protocol](https://marketprotocol.io), [UMA Protocol](https://umaproject.org), and [Yield Protocol](http://research.paradigm.xyz/Yield.pdf), are born in the world of blockchain. These protocols are good solutions to build derivatives contracts but often lack a simple, efficient, and easy to use trading mechanism. 
+With the development of the DeFi ecosystem, more and more synthetic assets and derivatives, such as [Market Protocol](https://marketprotocol.io), [UMA Protocol](https://umaproject.org), and [Yield Protocol](http://research.paradigm.xyz/Yield.pdf), are born in the world of blockchain. These protocols are good solutions to build derivatives contracts but often lack a simple, efficient, and easy-to-use trading mechanism. 
 
-Existing trading protocols, such as 0x, Hydro, and Uniswap, have well solved ERC20 tokens exchange requirements. However, traders often have difficulty in trading ERC20 position tokens of those derivatives directly. There are usually two reasons for this difficulty. First of all, the trade of decentralized derivatives is usually accompanied by minting, redeeming, and exchange of position tokens. The existing ERC20 trading protocols can only complete the exchange, lacking the functions of minting and redeeming. Furthermore, the pricing of derivatives is often different from that of position tokens. Traders need complex price conversion to trade position tokens directly.
+Current trading protocols, such as 0x, Hydro, and Uniswap, have well solved ERC20 tokens exchange requirements. However, traders often have difficulty in trading ERC20 position tokens of those derivatives directly. There are usually two reasons for this difficulty. First of all, the trade of decentralized derivatives is usually accompanied by minting, redeeming, and exchange of position tokens. The existing ERC20 trading protocols can only complete the exchange, lacking the functions of minting and redeeming. Furthermore, the pricing of derivatives is often different from that of position tokens. Traders need complex price conversion to trade position tokens directly.
 
 To solve the above difficulties, we designed a new trading protocol called "Mai Protocol" on Ethereum. 
 
@@ -35,24 +35,24 @@ Third, traders need to deal with two kinds of position tokens (Long Position Tok
 
 ## Solution
 
-Mai Protocol builds a trading platform that is very similar to traditional derivatives trading platforms. Mai protocol encapsulates the minting, exchange and redeeming operations for position tokens and provides only two operations, Buy and Sell, for echo Market Protocol contract. 
+Mai Protocol builds a trading platform that is very similar to traditional derivatives trading platforms. Mai protocol encapsulates the minting, exchange and redeeming operations for position tokens and provides only two operations -Buy and Sell- to echo Market Protocol contract. 
 
 Traders do all trading processes through Buy and Sell operations within Mai Protocol. If the trader expects the underlying asset price to rise, he can enter the long position at the asset price by Buy operation. If the trader expects the underlying asset price to fall, then he can enter the short position by Sell operation. Besides, traders with long positions can decrease or close positions by Sell operation, and traders with short positions can decrease or close positions by Buy operation. The trader only needs to place an order on the price of the underlying asset. Mai Protocol automatically calculates the position token price corresponding to the price of the order.
 
 The Mai Protocol relayer maintains a unified order book for each Market Protocol contract. The order book sorts all the orders by the bidding/asking prices of the underlying asset.
 
-The match engine can match the orders on the different side of the order book. According to the positions of the two counterparties, there are four different matching types. Mai Protocol smart contract performs different processes (exchange, minting, or redeeming) for different match types:
+The match engine can match the orders on the different sides of the order book. According to the positions of the two counterparties, there are four different matching types. Mai Protocol smart contract performs different processes (exchange, minting, or redeeming) for different match types:
 
 | Trader A's Side | Trader A's Position | Trader B's Side  | Trader B's Position  | Mai Protocol Smart Contract Process             |
 |-----------------|---------------------|------------------|----------------------|-------------------------------------------------|
 | Buy             | Positive or Zero    |  Sell            |  Positive            | Transfer the long position token from B to A and transfer the collateral token from A to B |
 | Buy             | Positive or Zero    |  Sell            |  Negative or Zero    | Mint a pair of position tokens from Market Protocol, send the long position token to A and the short position token to B |
 | Buy             | Negative            |  Sell            |  Positive            | Redeem the pair of position tokens through Market Protocol and send the returned collateral tokens to A and B |
-| Buy             | Negative            |  Sell            |  Positive or Zero    | Transfer the short position token from A to B and transfer the collateral token from B to A |
+| Buy             | Negative            |  Sell            |  Negative or Zero    | Transfer the short position token from A to B and transfer the collateral token from B to A |
 
 *"Positive" means the trader has long position tokens. "Negative" means the trader has short position tokens. "Zero" means the trader has no position token.*
 
-When trading frequently, the position tokens may be redeemed immediately after be minted. To reduce redundant minting and redeeming operations, Mai Protocol builds a minting pool. The pool reserves some position tokens in advance. Mai protocol tries to mint or redeem from the pool first. Only when the pool is insufficient, Mai protocol calls Market Protocol's mint or redeem interfaces.
+When being traded frequently, the position tokens may be redeemed immediately after being minted. To reduce redundant minting and redeeming operations, Mai Protocol builds a minting pool. The pool reserves some position tokens in advance. Mai protocol tries to mint or redeem from the pool first. Only when the pool is insufficient, Mai protocol calls Market Protocol's mint or redeem interfaces.
 
 ## Architecture
 ![mai-arch](asset/mai-arch.png)
